@@ -21,6 +21,7 @@ public struct Gorget {
     /**
      Produces a plan and function to revise names if needed using content hash
         and updating content in place
+     Output will be the same parent directory of `sourceDirectory`, named `Gorget_Revised`
      - Parameters:
         - sourceDirectory: URL of directory to revise content
         - manifestNames: A list of file names meant never to be renamed based on content
@@ -29,7 +30,7 @@ public struct Gorget {
      */
     public func generateRevisionPlan(
         for sourceDirectory: URL,
-        using manifestNames: Set<String>
+        skippingRenamingOf manifestNames: Set<String>
     ) async -> RevisionPlan {
         /*
          1. Content hash rev all file names whose modified date is after optional last build date

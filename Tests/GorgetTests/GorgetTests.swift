@@ -13,7 +13,10 @@ final class GorgetTests: XCTestCase {
         } operation: {
             Gorget()
         }
-        let plan = await library.generateRevisionPlan(for: Self.inputURL, using: ["2.html", "3.rss"])
+        let plan = await library.generateRevisionPlan(
+            for: Self.inputURL,
+            skippingRenamingOf: ["2.html", "3.rss"]
+        )
         
         XCTAssertNotNil(try revisionPlanRegex.wholeMatch(in: plan.description))
     }
@@ -24,7 +27,10 @@ final class GorgetTests: XCTestCase {
         } operation: {
             Gorget()
         }
-        let plan = await library.generateRevisionPlan(for: Self.inputURL, using: ["2.html", "3.rss"])
+        let plan = await library.generateRevisionPlan(
+            for: Self.inputURL,
+            skippingRenamingOf: ["2.html", "3.rss"]
+        )
         do {
             try await plan.execute()
         } catch {
@@ -41,12 +47,35 @@ final class GorgetTests: XCTestCase {
         } operation: {
             Gorget()
         }
-        let plan = await library.generateRevisionPlan(for: Self.inputURL, using: ["2.html", "3.rss"])
+        let plan = await library.generateRevisionPlan(
+            for: Self.inputURL,
+            skippingRenamingOf: ["2.html", "3.rss"]
+        )
         do {
             try await plan.execute()
             XCTFail("Failed destination creation didn't throw")
         } catch {}
     }
+
+    func testDestinationCreationUsesInput() async throws {
+        var attemptedDestination: URL? = nil
+        let library = withDependencies {
+            $0.fileClient = .testValue
+            $0.fileClient.createDirectory = { destination in
+                attemptedDestination = destination
+            }
+        } operation: {
+            Gorget()
+        }
+        let plan = await library.generateRevisionPlan(
+            for: Self.inputURL,
+            skippingRenamingOf: ["2.html", "3.rss"]
+        )
+        try await plan.execute()
+        let expected = Self.inputURL.deletingLastPathComponent().appending(path: "Gorget_Revised")
+        XCTAssertEqual(attemptedDestination, expected)
+    }
+
     
     func testGeneratesNoOpForFailedRetrieveFiles() async throws {
         let error = FileService.RootNotDirectory()
@@ -58,7 +87,10 @@ final class GorgetTests: XCTestCase {
         } operation: {
             Gorget()
         }
-        let plan = await library.generateRevisionPlan(for: Self.inputURL, using: ["2.html", "3.rss"])
+        let plan = await library.generateRevisionPlan(
+            for: Self.inputURL,
+            skippingRenamingOf: ["2.html", "3.rss"]
+        )
         XCTAssertEqual(plan.description, "Error encountered retriving files: \(error). Execute is a no-op")
     }
     
@@ -76,7 +108,10 @@ final class GorgetTests: XCTestCase {
         } operation: {
             return Gorget()
         }
-        let plan = await library.generateRevisionPlan(for: Self.inputURL, using: ["2.html", "3.rss"])
+        let plan = await library.generateRevisionPlan(
+            for: Self.inputURL,
+            skippingRenamingOf: ["2.html", "3.rss"]
+        )
         try await plan.execute()
         let sortedSets = copySets.sorted(by: { $0.src.absoluteString > $1.src.absoluteString })
         let sortedInputs = FileClient.testURLs(Self.inputURL).sorted(by: { $0.url.absoluteString > $1.url.absoluteString })
@@ -95,7 +130,10 @@ final class GorgetTests: XCTestCase {
         } operation: {
             return Gorget()
         }
-        let plan = await library.generateRevisionPlan(for: Self.inputURL, using: ["2.html", "3.rss"])
+        let plan = await library.generateRevisionPlan(
+            for: Self.inputURL,
+            skippingRenamingOf: ["2.html", "3.rss"]
+        )
         try await plan.execute()
         XCTAssertTrue(destinations.allSatisfy({ !$1.lastPathComponent.contains(".jpg") && !$1.lastPathComponent.contains(".png") }))
     }
