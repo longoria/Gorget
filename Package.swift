@@ -1,4 +1,4 @@
-// swift-tools-version: 5.8
+// swift-tools-version: 5.7.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -27,7 +27,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Dependencies", package: "swift-dependencies"),
             ],
-            swiftSettings: [.enableUpcomingFeature("StrictConcurrency")]
+            swiftSettings: [/*.enableUpcomingFeature("StrictConcurrency")*/]
         ),
         .testTarget(
             name: "GorgetTests",
@@ -38,7 +38,7 @@ let package = Package(
             resources: [
                 .copy("Resources")
             ],
-            swiftSettings: [.enableUpcomingFeature("StrictConcurrency")]
+            swiftSettings: [/*.enableUpcomingFeature("StrictConcurrency")*/]
         ),
     ]
 )
