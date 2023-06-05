@@ -33,12 +33,15 @@ public struct Gorget {
         skippingRenamingOf manifestNames: Set<String>
     ) async -> RevisionPlan {
         /*
-         1. Content hash rev all file names whose modified date is after optional last build date
+         1. Content hash rev all file names
             - When a file has had it's name revved, and resulted in a change, it's added to a tuple (prev name / new name) list for evaluation in other file content later
          2. For all text-based (public.text UTI), non-manifest files, replace any found name references, save
             - Any modified non-manifest files, that haven't had a content rev already, add to a last pass list
          3. Do a last pass on last pass list and manifest files replacing updated name references
          */
+        if !sourceDirectory.hasDirectoryPath {
+            return RevisionPlan(description: "Please pass a directory-hinted file URL. Execute is a no-op", execute: {})
+        }
         var resourcedURLs: [FileService.ResourcedURL] = []
         let retrieveFiles = Task { () -> [FileService.ResourcedURL] in
             return try await fileClient.retrieveFiles(sourceDirectory)
@@ -57,7 +60,7 @@ public struct Gorget {
         ) = await marshalResourcedURLs(resourcedURLs, using: manifestNames)
         var steps: [RevisionStep] = []
         // create destination directory
-        let destinationDirectory = sourceDirectory.deletingLastPathComponent().appendingPathComponent("Gorget_Revised")
+        let destinationDirectory = sourceDirectory.deletingLastPathComponent().appending(path: "Gorget_Revised", directoryHint: .isDirectory)
         let rootMessage = """
         Gorget Revise Content Plan:
         \(Self.divider)

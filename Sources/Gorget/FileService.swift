@@ -137,7 +137,7 @@ actor FileService {
                 let extensionName = nameComponents.last ?? ""
                 let revisedName = baseName.joined(separator: ".") + "-\(hashValue)" + "." + extensionName
                 var revisedURL = resourced.url.deletingLastPathComponent()
-                revisedURL = revisedURL.appendingPathComponent(revisedName)
+                revisedURL = revisedURL.appending(path: revisedName)
                 nameMap[resourced.url] = resourced.replacing(url: revisedURL)
             }
         }
