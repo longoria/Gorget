@@ -17,7 +17,6 @@ final class GorgetTests: XCTestCase {
             for: Self.inputURL,
             skippingRenamingOf: ["2.html", "3.rss"]
         )
-        print(plan.description)
         XCTAssertNotNil(try revisionPlanRegex.wholeMatch(in: plan.description))
     }
     

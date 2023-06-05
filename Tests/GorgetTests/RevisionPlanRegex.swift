@@ -55,7 +55,9 @@ Text Files:
 Copying:
 """
     OneOrMore(.any)
-    "[(src: Contents/Resources/Resources/Input/1.txt -- file:///"
+    "[(src: "
+    Optionally("Contents/")
+    "Resources/Resources/Input/1.txt -- file:///"
     OneOrMore(.any)
     ", dest: file:///"
     OneOrMore(.any)
@@ -101,4 +103,5 @@ In above copy set:
 
 Note: A last pass for files modified due to name revision changes in it's content may reflect outside above set
 """
+    ZeroOrMore(.any)
 }
