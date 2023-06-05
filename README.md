@@ -1,5 +1,7 @@
 # Gorget
 
+![Build Status]( https://github.com/longoria/Gorget/actions/workflows/swift.yml/badge.svg)
+
 Gorget is a Swift library enabling content hashing of static asset files for websites 
 
 This library is primarily meant for embedding in other Swift programs and applications.
