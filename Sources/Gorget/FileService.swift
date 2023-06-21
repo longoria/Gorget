@@ -46,7 +46,14 @@ actor FileService {
         // If overly ambitous replaces are a common scenario, a more sophisticated file-type-based RegEx will be implemented
         // Short-term workaround are using entity escaping for written content
         for pair in namePairs {
-            content = content.replacingOccurrences(of: pair.prev, with: pair.next)
+            let filenameBoundaryRegex = try NSRegularExpression(pattern: "\\b\(pair.prev)\\b", options: NSRegularExpression.Options.caseInsensitive)
+            let range = NSRange(content.startIndex..., in: content)
+            content = filenameBoundaryRegex.stringByReplacingMatches(
+                in: content,
+                options: [],
+                range: range,
+                withTemplate: pair.next
+            )
         }
         if content == originalContent {
             return false
